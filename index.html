@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TTWY · 等待你的时间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><polygon points="2,2 22,2 22,22 2,22" fill="%23ff88aa" stroke="%23ffffff" stroke-width="1.5"/><circle cx="12" cy="8" r="2.5" fill="%23ffffff"/><circle cx="12" cy="16" r="1.5" fill="%23ffffff"/><path d="M8 12 L16 12" stroke="%23ffffff" stroke-width="1.5"/></svg>') 12 8, auto;
+        }
+
+        button, .cd-deco, .strawberry, .orange-slice, .fish-deco, .cat-deco, .enter-btn, .pixel-pw-field, .music-toggle {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="%23ff5577" stroke="%23ffffff" stroke-width="1.5"/><circle cx="10" cy="11" r="1.8" fill="%23ffffff"/><circle cx="18" cy="11" r="1.8" fill="%23ffffff"/><path d="M10 17 Q14 21 18 17" stroke="%23ffffff" stroke-width="1.8" fill="none"/><path d="M14 5 L14 3 M14 23 L14 25" stroke="%23ff7799" stroke-width="2"/></svg>') 14 14, pointer;
+        }
+
+        .cat-deco:hover {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="10" cy="16" r="5" fill="%23ffaa88" stroke="%23885544" stroke-width="1"/><circle cx="22" cy="16" r="5" fill="%23ffaa88" stroke="%23885544" stroke-width="1"/><circle cx="16" cy="24" r="6" fill="%23ffccaa" stroke="%23885544" stroke-width="1"/><circle cx="12" cy="12" r="2" fill="%23ffccaa"/><circle cx="20" cy="12" r="2" fill="%23ffccaa"/></svg>') 16 16, pointer;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #2a1525;
+            background-image: radial-gradient(circle at 4px 4px, #4a2538 1.5px, transparent 1.5px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', 'VT323', 'Segoe UI Emoji', monospace;
+            padding: 20px;
+            position: relative;
+        }
+
+        .strawberry-box {
+            width: 100%;
+            max-width: 720px;
+            background: #f7c5d0;
+            background-image: radial-gradient(#e8a0b5 2px, transparent 2px);
+            background-size: 28px 28px;
+            border-radius: 20px 20px 16px 16px;
+            box-shadow: 
+                0 12px 0 #9e5a6e,
+                0 16px 20px rgba(0,0,0,0.3),
+                inset 0 1px 4px rgba(255,255,220,0.8);
+            position: relative;
+            transition: all 0.2s ease;
+            border: 3px solid #ffd0da;
+        }
+
+        .inner-border {
+            margin: 8px;
+            border: 2px solid #e8a0b5;
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: inset 0 0 0 2px #ffdae4;
+        }
+
+        .cd-deco {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ffd0d8 20%, #e8a0b0 50%, #c07088 80%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 0 3px #ffdae4,
+                0 0 0 6px #c06a7a,
+                0 6px 12px rgba(0,0,0,0.3);
+            animation: spinSlow 8s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: transform 0.1s ease;
+        }
+        .cd-deco:active {
+            transform: scale(0.95);
+        }
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .cd1 { top: -28px; left: -28px; }
+        .cd2 { bottom: -32px; right: -24px; width: 70px; height: 70px; animation-duration: 12s; animation-direction: reverse; }
+        .cd3 { top: 40%; right: -38px; width: 60px; height: 60px; animation-duration: 6s; }
+
+        .strawberry {
+            position: absolute;
+            font-size: 42px;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+            transition: all 0.05s linear;
+        }
+        .strawberry:active {
+            transform: scale(0.9);
+        }
+        .straw1 { top: -16px; right: 20px; transform: rotate(12deg); }
+        .straw2 { bottom: -28px; left: 16px; transform: rotate(-8deg); font-size: 48px; }
+        .straw3 { top: 24%; left: -34px; font-size: 38px; }
+
+        .orange-slice {
+            position: absolute;
+            font-size: 38px;
+            filter: drop-shadow(0 3px 5px #bb7755);
+            animation: pixelBounce 2s infinite;
+        }
+        @keyframes pixelBounce {
+            0%,100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        .orange1 { bottom: 12px; right: 28px; }
+        .orange2 { top: 48%; right: -28px; animation-duration: 2.4s; animation-delay: 0.2s; }
+        .orange3 { top: 68%; left: -24px; font-size: 34px; transform: rotate(15deg); }
+
+        .fish-deco {
+            position: absolute;
+            font-size: 36px;
+            filter: drop-shadow(0 2px 4px #ff8899);
+            animation: pixelSwim 3s ease-in-out infinite;
+        }
+        @keyframes pixelSwim {
+            0%,100% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(10px) rotate(4deg); }
+        }
+        .fish1 { bottom: 36px; left: 10px; }
+        .fish2 { top: 58%; left: -28px; font-size: 30px; animation-direction: reverse; }
+        .fish3 { bottom: 68px; right: -18px; font-size: 28px; }
+        .fish4 { top: 18%; right: 16px; }
+
+        .cat-deco {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 52px;
+            filter: drop-shadow(0 6px 6px #a05068);
+            transition: all 0.1s;
+        }
+        .cat-deco:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        .login-panel {
+            padding: 38px 28px 42px;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .title-area {
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .title-area h1 {
+            font-size: 44px;
+            letter-spacing: 3px;
+            color: #fff5f0;
+            text-shadow: 
+                3px 3px 0 #c06078,
+                5px 5px 0 #904a60;
+            font-family: 'Courier New', monospace;
+            background: #e8889e60;
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            font-weight: bold;
+        }
+        .sub-glow {
+            font-size: 16px;
+            color: #fff0e8;
+            background: #d4708a60;
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 40px;
+            margin-top: 12px;
+            backdrop-filter: blur(2px);
+        }
+
+        .territory-tag {
+            margin-top: 16px;
+            font-size: 15px;
+            color: #fff0e0;
+            background: #c8688260;
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 30px;
+            backdrop-filter: blur(2px);
+            letter-spacing: 1px;
+        }
+
+        .password-container {
+            background: #ffe4eadd;
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            border: 3px solid #e8a0b4;
+            box-shadow: 0 8px 0 #b06078, inset 0 0 16px #ffeef4;
+        }
+
+        .lock-icon {
+            font-size: 34px;
+            margin-bottom: 12px;
+            filter: drop-shadow(2px 2px 0 #c06a7a);
+        }
+
+        .password-input-area {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .pixel-pw-field {
+            background: #fff8fc;
+            border: 3px solid #e8a0b4;
+            padding: 12px 14px;
+            font-size: 32px;
+            width: 200px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 6px;
+            color: #b04060;
+            border-radius: 40px;
+            outline: none;
+            font-weight: bold;
+            box-shadow: inset 0 2px 4px #d0a0b0;
+        }
+        .pixel-pw-field:focus {
+            border-color: #d06080;
+            box-shadow: 0 0 0 3px #ffc0d0, inset 0 2px 4px #d0a0b0;
+        }
+
+        .enter-btn {
+            background: #e888a0;
+            border: none;
+            padding: 12px 30px;
+            font-size: 22px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 0 #b04462;
+            border-radius: 60px;
+            box-shadow: 0 5px 0 #a05068;
+            transition: 0.03s linear;
+            letter-spacing: 2px;
+        }
+        .enter-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #a05068;
+        }
+
+        .message-area {
+            margin-top: 18px;
+            min-height: 48px;
+        }
+        .error-bubble {
+            background: #ffd8e0;
+            color: #b84868;
+            padding: 6px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            border-left: 5px solid #ff6080;
+            font-family: monospace;
+        }
+
+        .missing-footer {
+            margin-top: 26px;
+            font-size: 14px;
+            color: #fff0e4;
+            text-shadow: 1px 1px 0 #b05870;
+            background: #d0708a60;
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+            line-height: 1.5;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .paw-prints {
+            position: absolute;
+            bottom: 8px;
+            left: 16px;
+            font-size: 22px;
+            opacity: 0.5;
+            letter-spacing: 4px;
+        }
+
+        .shake-effect {
+            animation: pixelShake 0.2s ease-in-out 0s 2;
+        }
+        @keyframes pixelShake {
+            0% { transform: translateX(0px); }
+            25% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+            100% { transform: translateX(0); }
+        }
+
+        footer {
+            font-size: 10px;
+            margin-top: 18px;
+            color: #e8889e;
+            text-shadow: 0 1px 0 #ffd0dc;
+        }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #e888a0dd;
+            backdrop-filter: blur(4px);
+            border: 2px solid #fff0e8;
+            border-radius: 50px;
+            padding: 8px 14px;
+            font-size: 20px;
+            font-family: monospace;
+            color: white;
+            text-shadow: 1px 1px 0 #a05068;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 0 #9e5a6e;
+            transition: 0.05s linear;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        .music-toggle:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #9e5a6e;
+        }
+        .music-toggle span {
+            font-size: 18px;
+        }
+        @media (max-width: 600px) {
+            .music-toggle {
+                padding: 6px 12px;
+                font-size: 18px;
+                bottom: 12px;
+                right: 12px;
+            }
+            .music-toggle span {
+                font-size: 14px;
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay.strawberry-bg {
+            background: #e8aab8;
+            background-image: radial-gradient(#d08098 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+
+        .loading-overlay.orange-bg {
+            background: #e8b888;
+            background-image: radial-gradient(#d09060 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+
+        .loading-card {
+            text-align: center;
+            background: #fff0e8ee;
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 42px 36px;
+            border: 4px solid #fff0e8;
+            box-shadow: 0 12px 0 #b06078, 0 0 0 4px #ffc0d0;
+            animation: pixelFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes pixelFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .loading-emoji {
+            font-size: 72px;
+            display: inline-block;
+            animation: pixelBounceRotate 1s ease-in-out infinite;
+        }
+
+        @keyframes pixelBounceRotate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(6deg); }
+            75% { transform: scale(0.95) rotate(-4deg); }
+        }
+
+        .loading-title {
+            font-size: 28px;
+            margin: 20px 0 14px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            font-family: monospace;
+        }
+
+        .loading-title.strawberry-title {
+            color: #b04060;
+            text-shadow: 2px 2px 0 #ffd0dc;
+        }
+
+        .loading-title.orange-title {
+            color: #b06030;
+            text-shadow: 2px 2px 0 #ffe0c8;
+        }
+
+        .loading-progress {
+            width: 260px;
+            height: 14px;
+            background: #e8c8d0;
+            border-radius: 20px;
+            margin: 18px auto;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px #b08090;
+        }
+
+        .loading-progress-bar {
+            width: 0%;
+            height: 100%;
+            transition: width 0.15s ease;
+        }
+
+        .loading-progress-bar.strawberry-bar {
+            background: linear-gradient(90deg, #e86888, #ffa0b8);
+        }
+
+        .loading-progress-bar.orange-bar {
+            background: linear-gradient(90deg, #e88040, #ffb870);
+        }
+
+        .loading-text {
+            font-size: 16px;
+            margin-top: 14px;
+            font-weight: bold;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+        }
+
+        .loading-text.strawberry-text {
+            color: #b04060;
+        }
+
+        .loading-text.orange-text {
+            color: #b06030;
+        }
+
+        .dot-animation {
+            display: inline-block;
+            animation: dotBlink 1.2s infinite;
+        }
+
+        @keyframes dotBlink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .falling-emoji {
+            position: absolute;
+            font-size: 28px;
+            pointer-events: none;
+            animation: pixelFall 2.8s linear forwards;
+            opacity: 0.7;
+            z-index: 2001;
+        }
+
+        @keyframes pixelFall {
+            0% { transform: translateY(-80px) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="musicToggle" class="music-toggle">
+    <span id="musicIcon">🎵</span>
+    <span id="musicText">ON</span>
+</div>
+
+<div class="strawberry-box" id="startPage">
+    <div class="inner-border">
+        <div class="cd-deco cd1" data-sound="cd1">💿</div>
+        <div class="cd-deco cd2" data-sound="cd2">📀</div>
+        <div class="cd-deco cd3" data-sound="cd3">💿</div>
+
+        <div class="strawberry straw1">🍓</div>
+        <div class="strawberry straw2">🍓🍓</div>
+        <div class="strawberry straw3">🍓</div>
+
+        <div class="orange-slice orange1">🍊</div>
+        <div class="orange-slice orange2">🍊</div>
+        <div class="orange-slice orange3">🍊</div>
+
+        <div class="fish-deco fish1">🐟</div>
+        <div class="fish-deco fish2">🐠</div>
+        <div class="fish-deco fish3">🐡</div>
+        <div class="fish-deco fish4">🐟</div>
+
+        <div class="cat-deco">🐱 🍓</div>
+
+        <div class="login-panel">
+            <div class="title-area">
+                <h1>等待你的时间</h1>
+                <div class="sub-glow">🍓 草莓猫 · 橘子鱼 🍊</div>
+                <div class="territory-tag">🐱 🐟 这里是小猫和小鱼的地盘 🐟 🐱</div>
+            </div>
+
+            <div class="password-container">
+                <div class="lock-icon">🔐 🐈 🐠</div>
+                <div class="password-input-area">
+                    <input type="password" id="secretCode" class="pixel-pw-field" maxlength="4" placeholder="****" inputmode="numeric">
+                    <button id="unlockBtn" class="enter-btn">➤ 进入游戏</button>
+                </div>
+                <div class="message-area" id="msgArea"></div>
+            </div>
+            
+            <div class="missing-footer">
+                🌙 你想念我的时候来到这里<br>这里也都是我对你的想念 ✨
+            </div>
+            
+            <footer>🐾 唱片机·如果思念有旋律 🐾</footer>
+        </div>
+        <div class="paw-prints">🐾 🐾 🐾 🐟</div>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-card" id="loadingCard">
+        <div class="loading-emoji" id="loadingEmoji">🍓</div>
+        <div class="loading-title" id="loadingTitle">正在进入小猫的世界</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loadingBar"></div>
+        </div>
+        <div class="loading-text" id="loadingText">
+            <span id="loadingLabel">🍓 加载中</span>
+            <span class="dot-animation">...</span>
+        </div>
+        <div id="loadingSub" style="margin-top: 18px; font-size: 13px;">✨ 草莓星星在闪烁 ✨</div>
+    </div>
+</div>
+
+<script>
+    // ========== 音频变量 ==========
+    let bgmAudio = null;
+    let audioCD1 = null;
+    let audioCD2 = null;
+    let audioCD3 = null;
+    
+    let isBgmPlaying = false;
+    let isBgmEnabled = true;
+    let audioActivated = false;
+    let currentHoverDisk = null;
+    let bgmPausedByDisk = false;
+
+    // ========== 音频初始化（请修改这里的文件路径） ==========
+    function initAudio() {
+        // =====================================================
+        // 请在这里修改你的音乐文件路径 ↓↓↓
+        // =====================================================
+        
+        // 背景音乐（循环）
+        // bgmAudio = new Audio('sounds/bgm.mp3');
+        // bgmAudio.loop = true;
+        // bgmAudio.volume = 0.4;
+        
+        // 光盘音效（悬停时播放）
+        // audioCD1 = new Audio('sounds/disk1.mp3');
+        // audioCD2 = new Audio('sounds/disk2.mp3');
+        // audioCD3 = new Audio('sounds/disk3.mp3');
+        
+        // =====================================================
+        console.log('🎵 音频预留位置已就绪，请取消注释并配置正确的文件路径');
+    }
+
+    function updateBGM() {
+        if (!bgmAudio) return;
+        
+        if (isBgmEnabled && audioActivated) {
+            if (!bgmPausedByDisk && !isBgmPlaying) {
+                bgmAudio.play().catch(e => console.log('BGM 播放失败', e));
+                isBgmPlaying = true;
+            }
+        } else {
+            if (isBgmPlaying) {
+                bgmAudio.pause();
+                isBgmPlaying = false;
+            }
+        }
+        updateMusicButtonUI();
+    }
+    
+    function pauseBGMForDisk() {
+        if (!bgmAudio || !isBgmEnabled || !isBgmPlaying) return;
+        bgmAudio.pause();
+        isBgmPlaying = false;
+        bgmPausedByDisk = true;
+    }
+    
+    function resumeBGMAfterDisk() {
+        if (!bgmAudio || !isBgmEnabled || !bgmPausedByDisk) return;
+        bgmPausedByDisk = false;
+        if (audioActivated && isBgmEnabled) {
+            bgmAudio.play().catch(e => console.log('BGM 恢复失败', e));
+            isBgmPlaying = true;
+        }
+    }
+    
+    function playDiskSound(diskId) {
+        if (!isBgmEnabled) return;
+        if (!audioActivated) return;
+        
+        let sound = null;
+        if (diskId === 'cd1') sound = audioCD1;
+        if (diskId === 'cd2') sound = audioCD2;
+        if (diskId === 'cd3') sound = audioCD3;
+        
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('光盘音效播放失败', e));
+        } else {
+            console.log(`🔊 悬停在 ${diskId}，请配置音效文件路径`);
+            const disk = document.querySelector(`.${diskId}`);
+            if(disk) {
+                disk.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    if(document.querySelector(`.${diskId}`)) {
+                        document.querySelector(`.${diskId}`).style.transform = '';
+                    }
+                }, 150);
+            }
+        }
+    }
+
+    function bindDiskHoverEvents() {
+        const disks = [
+            { el: document.querySelector('.cd1'), id: 'cd1' },
+            { el: document.querySelector('.cd2'), id: 'cd2' },
+            { el: document.querySelector('.cd3'), id: 'cd3' }
+        ];
+    
+        disks.forEach(disk => {
+            if (!disk.el) return;
+            
+            disk.el.addEventListener('mouseenter', () => {
+                if (currentHoverDisk === disk.id) return;
+                currentHoverDisk = disk.id;
+                pauseBGMForDisk();
+                playDiskSound(disk.id);
+            });
+            
+            disk.el.addEventListener('mouseleave', () => {
+                if (currentHoverDisk === disk.id) {
+                    currentHoverDisk = null;
+                }
+                resumeBGMAfterDisk();
+            });
+        });
+    }
+
+    function toggleBGM() {
+        if (!bgmAudio) {
+            console.log('⚠️ 未配置 BGM 文件，请在 initAudio() 中配置');
+            showTempMessage('🎵 请先配置 BGM 文件', true);
+            return;
+        }
+        
+        isBgmEnabled = !isBgmEnabled;
+        
+        if (isBgmEnabled) {
+            bgmPausedByDisk = false;
+            updateBGM();
+            showTempMessage('🎵 BGM 已开启', false);
+        } else {
+            if (isBgmPlaying) {
+                bgmAudio.pause();
+                isBgmPlaying = false;
+            }
+            currentHoverDisk = null;
+            bgmPausedByDisk = false;
+            showTempMessage('🔇 BGM 已关闭', false);
+        }
+        
+        updateMusicButtonUI();
+    }
+    
+    function updateMusicButtonUI() {
+        const icon = document.getElementById('musicIcon');
+        const text = document.getElementById('musicText');
+        if (isBgmEnabled && bgmAudio) {
+            icon.innerHTML = '🎵';
+            text.innerHTML = 'ON';
+        } else {
+            icon.innerHTML = '🔇';
+            text.innerHTML = 'OFF';
+        }
+    }
+    
+    function showTempMessage(msg, isError = false) {
+        const toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '80px';
+        toast.style.right = '20px';
+        toast.style.background = isError ? '#e888a0ee' : '#a0d080ee';
+        toast.style.color = '#2e1420';
+        toast.style.padding = '6px 14px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontFamily = 'monospace';
+        toast.style.fontSize = '12px';
+        toast.style.backdropFilter = 'blur(8px)';
+        toast.style.zIndex = '3000';
+        toast.style.border = '1px solid white';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    // 用户首次交互时激活音频
+    function activateAudioOnFirstTouch() {
+        if (audioActivated) return;
+        audioActivated = true;
+        
+        const silent = new Audio();
+        silent.play().then(() => {
+            console.log('✅ 音频权限已激活');
+            if (bgmAudio && isBgmEnabled) {
+                bgmAudio.play().catch(e => console.log('自动播放被阻止', e));
+                isBgmPlaying = true;
+                updateMusicButtonUI();
+            }
+        }).catch(() => {
+            console.log('⚠️ 音频激活失败');
+        });
+        
+        document.body.removeEventListener('click', activateAudioOnFirstTouch);
+        document.body.removeEventListener('touchstart', activateAudioOnFirstTouch);
+    }
+    document.body.addEventListener('click', activateAudioOnFirstTouch);
+    document.body.addEventListener('touchstart', activateAudioOnFirstTouch);
+
+    // ========== 登录逻辑 ==========
+    const PASSWORD_CAT = "7997";
+    const PASSWORD_FISH = "9779";
+    
+    const passwordInput = document.getElementById('secretCode');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const msgArea = document.getElementById('msgArea');
+    const startPage = document.getElementById('startPage');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingCard = document.getElementById('loadingCard');
+    const loadingEmoji = document.getElementById('loadingEmoji');
+    const loadingTitle = document.getElementById('loadingTitle');
+    const loadingBar = document.getElementById('loadingBar');
+    const loadingLabel = document.getElementById('loadingLabel');
+    const loadingSub = document.getElementById('loadingSub');
+    const musicToggle = document.getElementById('musicToggle');
+    
+    if(musicToggle) {
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleBGM();
+        });
+    }
+
+    function showMessage(text, isError = true) {
+        msgArea.innerHTML = `<div class="error-bubble">${isError ? '🍓💔🐟 ' : '🐱✨🐟 '}${text}</div>`;
+        if (!isError) {
+            startPage.style.transition = '0.2s';
+            startPage.style.boxShadow = '0 0 0 4px #ffc0d0, 0 0 0 8px #ffa5bb, 0 20px 30px rgba(0,0,0,0.2)';
+            setTimeout(() => {
+                startPage.style.boxShadow = '';
+            }, 400);
+        } else {
+            startPage.classList.add('shake-effect');
+            setTimeout(() => startPage.classList.remove('shake-effect'), 400);
+        }
+        if(isError){
+            setTimeout(() => {
+                if(msgArea.innerHTML.includes('💔')) msgArea.innerHTML = '';
+            }, 2000);
+        }
+    }
+    
+    function clearMessage() {
+        if(msgArea.innerHTML.includes('error-bubble')) msgArea.innerHTML = '';
+    }
+    
+    function createFallingRain(type) {
+        const emoji = type === 'strawberry' ? '🍓' : '🍊';
+        const count = type === 'strawberry' ? 15 : 12;
+        for(let i = 0; i < count; i++) {
+            setTimeout(() => {
+                const falling = document.createElement('div');
+                falling.className = 'falling-emoji';
+                falling.innerHTML = emoji;
+                falling.style.left = Math.random() * 100 + '%';
+                falling.style.animationDuration = 2 + Math.random() * 2 + 's';
+                falling.style.fontSize = 20 + Math.random() * 30 + 'px';
+                document.body.appendChild(falling);
+                setTimeout(() => falling.remove(), 3000);
+            }, i * 70);
+        }
+    }
+    
+    function showLoading(type) {
+        if (type === 'cat') {
+            loadingOverlay.className = 'loading-overlay strawberry-bg active';
+            loadingCard.className = 'loading-card';
+            loadingEmoji.innerHTML = '🍓';
+            loadingTitle.className = 'loading-title strawberry-title';
+            loadingTitle.innerHTML = '正在唤醒小猫梦境';
+            loadingBar.className = 'loading-progress-bar strawberry-bar';
+            loadingLabel.innerHTML = '🍓 加载中';
+            loadingSub.innerHTML = '✨ 小猫又在看漫画了吗 ✨';
+            createFallingRain('strawberry');
+        } else {
+            loadingOverlay.className = 'loading-overlay orange-bg active';
+            loadingCard.className = 'loading-card';
+            loadingEmoji.innerHTML = '🍊';
+            loadingTitle.className = 'loading-title orange-title';
+            loadingTitle.innerHTML = '正在唤醒小鱼梦境';
+            loadingBar.className = 'loading-progress-bar orange-bar';
+            loadingLabel.innerHTML = '🍊 加载中';
+            loadingSub.innerHTML = '✨ 小鱼制作橘子魔药中 ✨';
+            createFallingRain('orange');
+        }
+        
+        let progress = 0;
+        loadingBar.style.width = '0%';
+        
+        const interval = setInterval(() => {
+            progress += Math.random() * 15 + 5;
+            if(progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hide');
+                    setTimeout(() => {
+                        loadingOverlay.classList.remove('active');
+                        loadingOverlay.classList.remove('hide');
+                        if(type === 'cat') {
+                            showToast('🐱 欢迎来到小猫世界 · 游戏正在建设中 🍓');
+                        } else {
+                            showToast('🐟 欢迎来到小鱼世界 · 游戏正在建设中 🍊');
+                        }
+                        loadingBar.style.width = '0%';
+                    }, 600);
+                }, 400);
+            }
+            loadingBar.style.width = progress + '%';
+        }, 80);
+    }
+    
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '30px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = '#e888a0ee';
+        toast.style.color = '#2e1420';
+        toast.style.padding = '10px 24px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontFamily = 'monospace';
+        toast.style.fontWeight = 'bold';
+        toast.style.backdropFilter = 'blur(8px)';
+        toast.style.zIndex = '3000';
+        toast.style.border = '2px solid white';
+        toast.style.fontSize = '14px';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+    
+    function attemptUnlock() {
+        const enteredCode = passwordInput.value.trim();
+        if (enteredCode === "") {
+            showMessage("暗号空空… 小鱼吐了个泡泡 🐡", true);
+            return;
+        }
+        
+        if (enteredCode === PASSWORD_CAT) {
+            showMessage("门扉轻启 · 即将进入小猫的世界 🐱💫", false);
+            setTimeout(() => {
+                showLoading('cat');
+                passwordInput.value = '';
+                const catSpan = document.querySelector('.cat-deco');
+                if(catSpan) {
+                    catSpan.style.transform = 'translateX(-50%) scale(1.2)';
+                    setTimeout(() => catSpan.style.transform = '', 300);
+                }
+            }, 300);
+        } 
+        else if (enteredCode === PASSWORD_FISH) {
+            showMessage("水波荡漾 · 即将进入小鱼的世界 🐠💫", false);
+            setTimeout(() => {
+                showLoading('fish');
+                passwordInput.value = '';
+                const fishes = document.querySelectorAll('.fish-deco');
+                fishes.forEach(f => {
+                    f.style.transform = 'translateY(-12px)';
+                    setTimeout(() => f.style.transform = '', 300);
+                });
+            }, 300);
+        }
+        else {
+            showMessage(`“${enteredCode}” 不是思念暗号… 小猫歪头 🐱❓`, true);
+            passwordInput.value = '';
+            passwordInput.focus();
+            const strawberrys = document.querySelectorAll('.strawberry');
+            strawberrys.forEach(s => {
+                s.style.transform = 'rotate(6deg)';
+                setTimeout(() => s.style.transform = '', 120);
+            });
+        }
+    }
+    
+    passwordInput.addEventListener('input', (e) => {
+        let val = e.target.value;
+        val = val.replace(/[^0-9]/g, '');
+        if (val.length > 4) val = val.slice(0,4);
+        e.target.value = val;
+        if (msgArea.innerHTML) clearMessage();
+    });
+    
+    unlockBtn.addEventListener('click', attemptUnlock);
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            attemptUnlock();
+        }
+    });
+    
+    window.addEventListener('load', () => {
+        passwordInput.focus();
+        initAudio();
+        bindDiskHoverEvents();
+        console.log("🐱🐟🍓🍊 TTWY · 启动页已加载");
+        console.log("🎵 悬停光盘 → 暂停 BGM + 播放音效 | 移出 → 恢复 BGM");
+    });
+</script>
+</body>
+</html>
