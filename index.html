@@ -578,25 +578,19 @@
     let currentHoverDisk = null;
     let bgmPausedByDisk = false;
 
-    // ========== 音频初始化（请修改这里的文件路径） ==========
-    function initAudio() {
-        // =====================================================
-        // 请在这里修改你的音乐文件路径 ↓↓↓
-        // =====================================================
-        
-        // 背景音乐（循环）
-        bgmAudio = new Audio('sounds/bgm.mp3');
-        bgmAudio.loop = true;
-        bgmAudio.volume = 0.4;
-        
-        // 光盘音效（悬停时播放）
-        audioCD1 = new Audio('sounds/disk1.mp3');
-        audioCD2 = new Audio('sounds/disk2.mp3');
-        audioCD3 = new Audio('sounds/disk3.mp3');
-        
-        // =====================================================
-        console.log('🎵 音频预留位置已就绪，请取消注释并配置正确的文件路径');
-    }
+   function initAudio() {
+    // 临时测试音频（来自 Pixabay）
+    bgmAudio = new Audio('https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808f0bf07.mp3');
+    bgmAudio.loop = true;
+    bgmAudio.volume = 0.4;
+    
+    const testSound = 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7c6c0.mp3';
+    audioCD1 = new Audio(testSound);
+    audioCD2 = new Audio(testSound);
+    audioCD3 = new Audio(testSound);
+    
+    console.log('🎵 测试音频已加载');
+}
 
     function updateBGM() {
         if (!bgmAudio) return;
