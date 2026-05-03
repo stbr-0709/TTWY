@@ -578,18 +578,18 @@
     let currentHoverDisk = null;
     let bgmPausedByDisk = false;
 
-   function initAudio() {
-    // 使用 GitHub 允许的测试音频
-    bgmAudio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+  function initAudio() {
+    // 备用：使用 GitHub 官方示例音频
+    bgmAudio = new Audio('https://www.w3schools.com/html/horse.ogg');
     bgmAudio.loop = true;
     bgmAudio.volume = 0.4;
     
-    const testSound = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
+    const testSound = 'https://www.w3schools.com/html/horse.ogg';
     audioCD1 = new Audio(testSound);
     audioCD2 = new Audio(testSound);
     audioCD3 = new Audio(testSound);
     
-    console.log('🎵 SoundHelix 测试音频已加载');
+    console.log('🎵 W3Schools 测试音频已加载');
 }
 
     function updateBGM() {
