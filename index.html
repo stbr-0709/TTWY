@@ -579,17 +579,17 @@
     let bgmPausedByDisk = false;
 
    function initAudio() {
-    // 临时测试音频（来自 Pixabay）
-    bgmAudio = new Audio('https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808f0bf07.mp3');
+    // 使用 GitHub 允许的测试音频
+    bgmAudio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
     bgmAudio.loop = true;
     bgmAudio.volume = 0.4;
     
-    const testSound = 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7c6c0.mp3';
+    const testSound = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
     audioCD1 = new Audio(testSound);
     audioCD2 = new Audio(testSound);
     audioCD3 = new Audio(testSound);
     
-    console.log('🎵 测试音频已加载');
+    console.log('🎵 SoundHelix 测试音频已加载');
 }
 
     function updateBGM() {
