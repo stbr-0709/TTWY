@@ -531,6 +531,7 @@
     let audioCD3 = null;
     let isBgmPlaying = false;
     let isBgmEnabled = true;
+    let bgmPausedByDisk = false;  // 新增：记录BGM是否被光盘暂停
 
     // ========== 预加载所有音频 ==========
     function preloadAudio() {
@@ -616,6 +617,8 @@
         isBgmEnabled = !isBgmEnabled;
         
         if (isBgmEnabled) {
+            // 清除光盘暂停标记
+            bgmPausedByDisk = false;
             bgmAudio.play().catch(e => console.log('播放失败', e));
             isBgmPlaying = true;
         } else {
@@ -638,7 +641,7 @@
         }
     }
     
-    // 播放光盘音效
+    // 播放光盘音效（暂停BGM，播完恢复）
     function playDiskSound(diskId) {
         if (!isBgmEnabled) return;
         
@@ -648,8 +651,26 @@
         if (diskId === 'cd3') sound = audioCD3;
         
         if (sound) {
+            // 如果BGM正在播放，先暂停它
+            if (bgmAudio && isBgmPlaying) {
+                bgmAudio.pause();
+                isBgmPlaying = false;
+                bgmPausedByDisk = true;
+            }
+            
+            // 播放音效
             sound.currentTime = 0;
             sound.play().catch(e => console.log('音效播放失败', e));
+            
+            // 音效播放完毕后恢复BGM
+            sound.onended = () => {
+                if (bgmPausedByDisk && isBgmEnabled && bgmAudio) {
+                    bgmAudio.play().catch(e => console.log('BGM恢复失败', e));
+                    isBgmPlaying = true;
+                    bgmPausedByDisk = false;
+                }
+                sound.onended = null; // 清理事件，避免重复触发
+            };
         }
     }
     
