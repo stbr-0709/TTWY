@@ -531,7 +531,6 @@
     let audioCD3 = null;
     let isBgmPlaying = false;
     let isBgmEnabled = true;
-    let bgmPausedByDisk = false;  // 新增：记录BGM是否被光盘暂停
 
     // ========== 预加载所有音频 ==========
     function preloadAudio() {
@@ -584,7 +583,6 @@
                 
                 audio.addEventListener('error', (e) => {
                     console.warn(`⚠️ 加载失败: ${file.path}`, e);
-                    // 即使失败也继续
                     onFileLoaded();
                 });
                 
@@ -594,7 +592,6 @@
         });
     }
     
-    // 显示进入按钮
     function showEnterButton() {
         const enterBtn = document.getElementById('enterBtn');
         if (enterBtn) {
@@ -602,7 +599,6 @@
         }
     }
     
-    // 开始播放 BGM
     function startBGM() {
         if (bgmAudio && isBgmEnabled) {
             bgmAudio.play().catch(e => console.log('BGM 播放失败', e));
@@ -610,15 +606,12 @@
         }
     }
     
-    // 切换 BGM
     function toggleBGM() {
         if (!bgmAudio) return;
         
         isBgmEnabled = !isBgmEnabled;
         
         if (isBgmEnabled) {
-            // 清除光盘暂停标记
-            bgmPausedByDisk = false;
             bgmAudio.play().catch(e => console.log('播放失败', e));
             isBgmPlaying = true;
         } else {
@@ -641,7 +634,7 @@
         }
     }
     
-    // 播放光盘音效（暂停BGM，播完恢复）
+    // ========== 核心修改：播放光盘音效（暂停BGM，播完恢复） ==========
     function playDiskSound(diskId) {
         if (!isBgmEnabled) return;
         
@@ -655,7 +648,6 @@
             if (bgmAudio && isBgmPlaying) {
                 bgmAudio.pause();
                 isBgmPlaying = false;
-                bgmPausedByDisk = true;
             }
             
             // 播放音效
@@ -664,17 +656,15 @@
             
             // 音效播放完毕后恢复BGM
             sound.onended = () => {
-                if (bgmPausedByDisk && isBgmEnabled && bgmAudio) {
+                if (isBgmEnabled && bgmAudio) {
                     bgmAudio.play().catch(e => console.log('BGM恢复失败', e));
                     isBgmPlaying = true;
-                    bgmPausedByDisk = false;
                 }
-                sound.onended = null; // 清理事件，避免重复触发
+                sound.onended = null;
             };
         }
     }
     
-    // 绑定光盘点击
     function bindDiskClickEvents() {
         const disks = [
             { el: document.querySelector('.cd1'), id: 'cd1' },
