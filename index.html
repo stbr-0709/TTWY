@@ -55,8 +55,7 @@
             box-shadow: inset 0 0 0 2px #ffdae4;
         }
 
-        /* 光盘旋转动画 */
-        @keyframes spinSlow {
+        @keyframes spinFast {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
@@ -68,7 +67,6 @@
             background: radial-gradient(circle, #ffd0d8 20%, #e8a0b0 50%, #c07088 80%);
             border-radius: 50%;
             box-shadow: 0 0 0 3px #ffdae4, 0 0 0 6px #c06a7a, 0 6px 12px rgba(0,0,0,0.3);
-            /* 默认不旋转 */
             animation: none;
             display: flex;
             align-items: center;
@@ -81,6 +79,11 @@
         .cd1 { top: -28px; left: -28px; }
         .cd2 { bottom: -32px; right: -24px; width: 70px; height: 70px; }
         .cd3 { top: 40%; right: -38px; width: 60px; height: 60px; }
+
+        /* 旋转动画类 */
+        .cd-spinning {
+            animation: spinFast 0.3s linear infinite !important;
+        }
 
         .strawberry {
             position: absolute;
@@ -343,7 +346,6 @@
             }
         }
 
-        /* 加载页面 */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -597,6 +599,29 @@
         }
     }
     
+    // 停止所有光盘旋转
+    function stopAllDiskSpin() {
+        document.querySelectorAll('.cd-deco').forEach(disk => {
+            disk.classList.remove('cd-spinning');
+        });
+    }
+    
+    // 开始指定光盘旋转
+    function startDiskSpin(diskId) {
+        const disk = document.querySelector(`.${diskId}`);
+        if (disk) {
+            disk.classList.add('cd-spinning');
+        }
+    }
+    
+    // 停止指定光盘旋转
+    function stopDiskSpin(diskId) {
+        const disk = document.querySelector(`.${diskId}`);
+        if (disk) {
+            disk.classList.remove('cd-spinning');
+        }
+    }
+    
     // 全局音效开关
     function toggleBGM() {
         if (!bgmAudio) return;
@@ -609,43 +634,20 @@
         } else {
             bgmAudio.pause();
             isBgmPlaying = false;
+            // 停止所有音效和旋转
             if (currentSound) {
                 currentSound.pause();
                 currentSound.currentTime = 0;
                 currentSound = null;
+            }
+            if (currentPlayingDisk) {
+                stopDiskSpin(currentPlayingDisk);
                 currentPlayingDisk = null;
             }
-            removeAllDiskSpin();
+            stopAllDiskSpin();
         }
         
         updateMusicButtonUI();
-    }
-    
-    // 停止所有光盘旋转
-    function removeAllDiskSpin() {
-        const disks = ['.cd1', '.cd2', '.cd3'];
-        disks.forEach(selector => {
-            const disk = document.querySelector(selector);
-            if (disk) {
-                disk.style.animation = 'none';
-            }
-        });
-    }
-    
-    // 光盘开始旋转（播放时）
-    function addDiskSpinAnimation(diskId) {
-        const disk = document.querySelector(`.${diskId}`);
-        if (disk) {
-            disk.style.animation = 'spinSlow 0.3s linear infinite';
-        }
-    }
-    
-    // 光盘停止旋转
-    function removeDiskSpinAnimation(diskId) {
-        const disk = document.querySelector(`.${diskId}`);
-        if (disk) {
-            disk.style.animation = 'none';
-        }
     }
     
     function updateMusicButtonUI() {
@@ -660,6 +662,14 @@
         }
     }
     
+    // 恢复BGM
+    function resumeBGM() {
+        if (isBgmEnabled && bgmAudio && !isBgmPlaying) {
+            bgmAudio.play().catch(e => console.log('BGM恢复失败', e));
+            isBgmPlaying = true;
+        }
+    }
+    
     // 播放光盘音效
     function playDiskSound(diskId) {
         if (!isBgmEnabled) return;
@@ -671,12 +681,23 @@
         
         if (!sound) return;
         
-        // 如果有正在播放的音效，先停止
+        // 如果点击的是当前正在播放的光盘，停止它并恢复BGM
+        if (currentPlayingDisk === diskId && currentSound) {
+            currentSound.pause();
+            currentSound.currentTime = 0;
+            stopDiskSpin(diskId);
+            currentPlayingDisk = null;
+            currentSound = null;
+            resumeBGM();
+            return;
+        }
+        
+        // 如果有其他光盘正在播放，先停止
         if (currentSound) {
             currentSound.pause();
             currentSound.currentTime = 0;
             if (currentPlayingDisk) {
-                removeDiskSpinAnimation(currentPlayingDisk);
+                stopDiskSpin(currentPlayingDisk);
             }
         }
         
@@ -691,7 +712,7 @@
         currentSound = sound;
         
         // 开始旋转动画
-        addDiskSpinAnimation(diskId);
+        startDiskSpin(diskId);
         
         // 播放音效
         sound.currentTime = 0;
@@ -700,11 +721,8 @@
         // 音效播放完毕，恢复BGM和停止旋转
         sound.onended = () => {
             if (currentPlayingDisk === diskId) {
-                if (isBgmEnabled && bgmAudio) {
-                    bgmAudio.play().catch(e => console.log('BGM恢复失败', e));
-                    isBgmPlaying = true;
-                }
-                removeDiskSpinAnimation(diskId);
+                resumeBGM();
+                stopDiskSpin(diskId);
                 currentPlayingDisk = null;
                 currentSound = null;
             }
