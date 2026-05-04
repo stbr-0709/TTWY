@@ -55,7 +55,7 @@
             box-shadow: inset 0 0 0 2px #ffdae4;
         }
 
-        /* ========== 光盘旋转动画 ========== */
+        /* 光盘旋转动画 */
         @keyframes spinSlow {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -68,7 +68,8 @@
             background: radial-gradient(circle, #ffd0d8 20%, #e8a0b0 50%, #c07088 80%);
             border-radius: 50%;
             box-shadow: 0 0 0 3px #ffdae4, 0 0 0 6px #c06a7a, 0 6px 12px rgba(0,0,0,0.3);
-            animation: spinSlow 8s linear infinite;
+            /* 默认不旋转 */
+            animation: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,8 +79,8 @@
         }
         .cd-deco:active { transform: scale(0.95); }
         .cd1 { top: -28px; left: -28px; }
-        .cd2 { bottom: -32px; right: -24px; width: 70px; height: 70px; animation-duration: 12s; animation-direction: reverse; }
-        .cd3 { top: 40%; right: -38px; width: 60px; height: 60px; animation-duration: 6s; }
+        .cd2 { bottom: -32px; right: -24px; width: 70px; height: 70px; }
+        .cd3 { top: 40%; right: -38px; width: 60px; height: 60px; }
 
         .strawberry {
             position: absolute;
@@ -342,6 +343,7 @@
             }
         }
 
+        /* 加载页面 */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -595,6 +597,7 @@
         }
     }
     
+    // 全局音效开关
     function toggleBGM() {
         if (!bgmAudio) return;
         
@@ -618,16 +621,18 @@
         updateMusicButtonUI();
     }
     
+    // 停止所有光盘旋转
     function removeAllDiskSpin() {
         const disks = ['.cd1', '.cd2', '.cd3'];
         disks.forEach(selector => {
             const disk = document.querySelector(selector);
             if (disk) {
-                disk.style.animation = 'spinSlow 8s linear infinite';
+                disk.style.animation = 'none';
             }
         });
     }
     
+    // 光盘开始旋转（播放时）
     function addDiskSpinAnimation(diskId) {
         const disk = document.querySelector(`.${diskId}`);
         if (disk) {
@@ -635,10 +640,11 @@
         }
     }
     
+    // 光盘停止旋转
     function removeDiskSpinAnimation(diskId) {
         const disk = document.querySelector(`.${diskId}`);
         if (disk) {
-            disk.style.animation = 'spinSlow 8s linear infinite';
+            disk.style.animation = 'none';
         }
     }
     
@@ -654,6 +660,7 @@
         }
     }
     
+    // 播放光盘音效
     function playDiskSound(diskId) {
         if (!isBgmEnabled) return;
         
@@ -664,6 +671,7 @@
         
         if (!sound) return;
         
+        // 如果有正在播放的音效，先停止
         if (currentSound) {
             currentSound.pause();
             currentSound.currentTime = 0;
@@ -672,19 +680,24 @@
             }
         }
         
+        // 暂停BGM
         if (bgmAudio && isBgmPlaying) {
             bgmAudio.pause();
             isBgmPlaying = false;
         }
         
+        // 记录当前播放
         currentPlayingDisk = diskId;
         currentSound = sound;
         
+        // 开始旋转动画
         addDiskSpinAnimation(diskId);
         
+        // 播放音效
         sound.currentTime = 0;
         sound.play().catch(e => console.log('音效播放失败', e));
         
+        // 音效播放完毕，恢复BGM和停止旋转
         sound.onended = () => {
             if (currentPlayingDisk === diskId) {
                 if (isBgmEnabled && bgmAudio) {
@@ -699,6 +712,7 @@
         };
     }
     
+    // 绑定光盘点击事件
     function bindDiskClickEvents() {
         const disks = [
             { el: document.querySelector('.cd1'), id: 'cd1' },
